@@ -2,7 +2,7 @@
 -- Archeron Hub (SpeedHub Style UI) by Zeno
 
 -- CONFIG
-local logoID = "rbxassetid://16323983276" -- Archeron logo
+local logoID = "rbxassetid://17629427114" -- Archeron logo
 local themeColor = Color3.fromRGB(100, 0, 150)
 local accentColor = Color3.fromRGB(200, 150, 255)
 
