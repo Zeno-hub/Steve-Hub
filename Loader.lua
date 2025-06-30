@@ -1,10 +1,8 @@
---// Load Rayfield UI
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
---// UI Window
 local Window = Rayfield:CreateWindow({
    Name = "Steve Hub | Grow a Garden",
-   LoadingTitle = "Grow a Garden",
+   LoadingTitle = "Loading UI...",
    LoadingSubtitle = "by Zeno",
    ConfigurationSaving = {
       Enabled = false,
@@ -15,7 +13,8 @@ local Window = Rayfield:CreateWindow({
    KeySystem = false,
 })
 
---// Data Seed & Gear
+local Tab = Window:CreateTab("Main", 4483362458)
+
 local seeds = {
    "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Tomato Seed",
    "Cauliflower Seed", "Watermelon Seed", "Green Apple Seed", "Avocado Seed",
@@ -33,120 +32,100 @@ local gears = {
 local selectedSeed = seeds[1]
 local selectedGear = gears[1]
 
---// Dropdown Pilih Seed
-Window:CreateDropdown({
+-- Dropdown Seed
+Tab:CreateDropdown({
    Name = "Pilih Seed",
    Options = seeds,
    CurrentOption = selectedSeed,
-   Flag = "SeedOption",
-   Callback = function(option)
-      selectedSeed = option
-   end,
+   Callback = function(Value)
+      selectedSeed = Value
+   end
 })
 
---// Dropdown Pilih Gear
-Window:CreateDropdown({
+-- Dropdown Gear
+Tab:CreateDropdown({
    Name = "Pilih Gear",
    Options = gears,
    CurrentOption = selectedGear,
-   Flag = "GearOption",
-   Callback = function(option)
-      selectedGear = option
-   end,
+   Callback = function(Value)
+      selectedGear = Value
+   end
 })
 
---// Auto Buy Seed
-Window:CreateToggle({
+-- Auto Buy Seed
+Tab:CreateToggle({
    Name = "Auto Buy Seed",
    CurrentValue = false,
-   Flag = "AutoBuySeed",
-   Callback = function(state)
-      getgenv().autoBuySeed = state
-      task.spawn(function()
-         while getgenv().autoBuySeed do
-            game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedSeed)
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoBuySeed = Value
+      while getgenv().autoBuySeed do
+         game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedSeed)
+         task.wait(1)
+      end
+   end
 })
 
---// Auto Buy Gear
-Window:CreateToggle({
+-- Auto Buy Gear
+Tab:CreateToggle({
    Name = "Auto Buy Gear",
    CurrentValue = false,
-   Flag = "AutoBuyGear",
-   Callback = function(state)
-      getgenv().autoBuyGear = state
-      task.spawn(function()
-         while getgenv().autoBuyGear do
-            game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedGear)
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoBuyGear = Value
+      while getgenv().autoBuyGear do
+         game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedGear)
+         task.wait(1)
+      end
+   end
 })
 
---// Auto Plant
-Window:CreateToggle({
+-- Auto Plant
+Tab:CreateToggle({
    Name = "Auto Plant",
    CurrentValue = false,
-   Flag = "AutoPlant",
-   Callback = function(state)
-      getgenv().autoPlant = state
-      task.spawn(function()
-         while getgenv().autoPlant do
-            game:GetService("ReplicatedStorage").Remotes.Plant:FireServer()
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoPlant = Value
+      while getgenv().autoPlant do
+         game:GetService("ReplicatedStorage").Remotes.Plant:FireServer()
+         task.wait(1)
+      end
+   end
 })
 
---// Auto Water
-Window:CreateToggle({
+-- Auto Water
+Tab:CreateToggle({
    Name = "Auto Water",
    CurrentValue = false,
-   Flag = "AutoWater",
-   Callback = function(state)
-      getgenv().autoWater = state
-      task.spawn(function()
-         while getgenv().autoWater do
-            game:GetService("ReplicatedStorage").Remotes.Water:FireServer()
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoWater = Value
+      while getgenv().autoWater do
+         game:GetService("ReplicatedStorage").Remotes.Water:FireServer()
+         task.wait(1)
+      end
+   end
 })
 
---// Auto Harvest
-Window:CreateToggle({
+-- Auto Harvest
+Tab:CreateToggle({
    Name = "Auto Harvest",
    CurrentValue = false,
-   Flag = "AutoHarvest",
-   Callback = function(state)
-      getgenv().autoHarvest = state
-      task.spawn(function()
-         while getgenv().autoHarvest do
-            game:GetService("ReplicatedStorage").Remotes.Harvest:FireServer()
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoHarvest = Value
+      while getgenv().autoHarvest do
+         game:GetService("ReplicatedStorage").Remotes.Harvest:FireServer()
+         task.wait(1)
+      end
+   end
 })
 
---// Auto Sell
-Window:CreateToggle({
+-- Auto Sell
+Tab:CreateToggle({
    Name = "Auto Sell",
    CurrentValue = false,
-   Flag = "AutoSell",
-   Callback = function(state)
-      getgenv().autoSell = state
-      task.spawn(function()
-         while getgenv().autoSell do
-            game:GetService("ReplicatedStorage").Remotes.Sell:FireServer()
-            task.wait(1)
-         end
-      end)
-   end,
+   Callback = function(Value)
+      getgenv().autoSell = Value
+      while getgenv().autoSell do
+         game:GetService("ReplicatedStorage").Remotes.Sell:FireServer()
+         task.wait(1)
+      end
+   end
 })
