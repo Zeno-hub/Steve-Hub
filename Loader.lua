@@ -1,177 +1,152 @@
+--// Load Rayfield UI
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Archeron Hub (SpeedHub Style UI) by Zeno
+--// UI Window
+local Window = Rayfield:CreateWindow({
+   Name = "Steve Hub | Grow a Garden",
+   LoadingTitle = "Grow a Garden",
+   LoadingSubtitle = "by Zeno",
+   ConfigurationSaving = {
+      Enabled = false,
+   },
+   Discord = {
+      Enabled = false,
+   },
+   KeySystem = false,
+})
 
--- CONFIG
-local logoID = "rbxassetid://17629427114" -- Archeron logo
-local themeColor = Color3.fromRGB(100, 0, 150)
-local accentColor = Color3.fromRGB(200, 150, 255)
+--// Data Seed & Gear
+local seeds = {
+   "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Tomato Seed",
+   "Cauliflower Seed", "Watermelon Seed", "Green Apple Seed", "Avocado Seed",
+   "Banana Seed", "Pineapple Seed", "Kiwi seed", "Bell Pepper Seed",
+   "Pricky Pear Seed", "Loquat Seed", "Feijoa Seed", "Sugar Apple"
+}
 
--- UI SETUP
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local UIS = game:GetService("UserInputService")
-local player = Players.LocalPlayer
+local gears = {
+   "Watering Can", "Trowel", "Recall Wrench", "Basic Sprinkler",
+   "Advanced Sprinkler", "Godly Sprinkler", "Tanning Mirror",
+   "Master Sprinkler", "Cleaning Spray", "Favorite Tools",
+   "Harvest Tool", "Friendship Pot"
+}
 
-local gui = Instance.new("ScreenGui", game.CoreGui)
-gui.Name = "ArcheronHub"
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.ResetOnSpawn = false
+local selectedSeed = seeds[1]
+local selectedGear = gears[1]
 
--- Main Frame
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 600, 0, 350)
-main.Position = UDim2.new(0.5, -300, 0.5, -175)
-main.BackgroundColor3 = themeColor
-main.BorderSizePixel = 0
-main.AnchorPoint = Vector2.new(0.5, 0.5)
-main.ClipsDescendants = true
-main.Active = true
-main.Draggable = true
+--// Dropdown Pilih Seed
+Window:CreateDropdown({
+   Name = "Pilih Seed",
+   Options = seeds,
+   CurrentOption = selectedSeed,
+   Flag = "SeedOption",
+   Callback = function(option)
+      selectedSeed = option
+   end,
+})
 
--- Sidebar
-local sidebar = Instance.new("Frame", main)
-sidebar.Size = UDim2.new(0, 140, 1, 0)
-sidebar.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
+--// Dropdown Pilih Gear
+Window:CreateDropdown({
+   Name = "Pilih Gear",
+   Options = gears,
+   CurrentOption = selectedGear,
+   Flag = "GearOption",
+   Callback = function(option)
+      selectedGear = option
+   end,
+})
 
--- Title
-local title = Instance.new("TextLabel", sidebar)
-title.Size = UDim2.new(1, 0, 0, 50)
-title.Text = "Archeron Hub"
-title.Font = Enum.Font.GothamBold
-title.TextSize = 20
-title.TextColor3 = accentColor
-title.BackgroundTransparency = 1
+--// Auto Buy Seed
+Window:CreateToggle({
+   Name = "Auto Buy Seed",
+   CurrentValue = false,
+   Flag = "AutoBuySeed",
+   Callback = function(state)
+      getgenv().autoBuySeed = state
+      task.spawn(function()
+         while getgenv().autoBuySeed do
+            game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedSeed)
+            task.wait(1)
+         end
+      end)
+   end,
+})
 
--- Tab Buttons
-local tabs = {"Main", "Shop", "Teleport", "Misc", "Credits", "Player", "Automatically"}
-local pages = {}
+--// Auto Buy Gear
+Window:CreateToggle({
+   Name = "Auto Buy Gear",
+   CurrentValue = false,
+   Flag = "AutoBuyGear",
+   Callback = function(state)
+      getgenv().autoBuyGear = state
+      task.spawn(function()
+         while getgenv().autoBuyGear do
+            game:GetService("ReplicatedStorage").Remotes.BuyItem:FireServer(selectedGear)
+            task.wait(1)
+         end
+      end)
+   end,
+})
 
-local function switchTo(tabName)
-    for name, page in pairs(pages) do
-        page.Visible = (name == tabName)
-    end
-end
+--// Auto Plant
+Window:CreateToggle({
+   Name = "Auto Plant",
+   CurrentValue = false,
+   Flag = "AutoPlant",
+   Callback = function(state)
+      getgenv().autoPlant = state
+      task.spawn(function()
+         while getgenv().autoPlant do
+            game:GetService("ReplicatedStorage").Remotes.Plant:FireServer()
+            task.wait(1)
+         end
+      end)
+   end,
+})
 
-for i, name in ipairs(tabs) do
-    local btn = Instance.new("TextButton", sidebar)
-    btn.Size = UDim2.new(1, -20, 0, 30)
-    btn.Position = UDim2.new(0, 10, 0, 50 + (i-1)*35)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(90, 0, 140)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    btn.MouseButton1Click:Connect(function()
-        switchTo(name)
-    end)
-end
+--// Auto Water
+Window:CreateToggle({
+   Name = "Auto Water",
+   CurrentValue = false,
+   Flag = "AutoWater",
+   Callback = function(state)
+      getgenv().autoWater = state
+      task.spawn(function()
+         while getgenv().autoWater do
+            game:GetService("ReplicatedStorage").Remotes.Water:FireServer()
+            task.wait(1)
+         end
+      end)
+   end,
+})
 
--- Page Container
-for _, name in ipairs(tabs) do
-    local page = Instance.new("Frame", main)
-    page.Name = name
-    page.Size = UDim2.new(1, -140, 1, 0)
-    page.Position = UDim2.new(0, 140, 0, 0)
-    page.BackgroundColor3 = Color3.fromRGB(50, 0, 70)
-    page.Visible = false
-    pages[name] = page
+--// Auto Harvest
+Window:CreateToggle({
+   Name = "Auto Harvest",
+   CurrentValue = false,
+   Flag = "AutoHarvest",
+   Callback = function(state)
+      getgenv().autoHarvest = state
+      task.spawn(function()
+         while getgenv().autoHarvest do
+            game:GetService("ReplicatedStorage").Remotes.Harvest:FireServer()
+            task.wait(1)
+         end
+      end)
+   end,
+})
 
-    -- Example Label
-    local lbl = Instance.new("TextLabel", page)
-    lbl.Size = UDim2.new(1, 0, 0, 40)
-    lbl.Position = UDim2.new(0, 0, 0, 10)
-    lbl.Text = name .. " Page"
-    lbl.Font = Enum.Font.GothamBold
-    lbl.TextSize = 22
-    lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-    lbl.BackgroundTransparency = 1
-end
-
-switchTo("Main")
-
--- Close Button
-local closeBtn = Instance.new("ImageButton", main)
-closeBtn.Size = UDim2.new(0, 28, 0, 28)
-closeBtn.Position = UDim2.new(1, -35, 0, 7)
-closeBtn.BackgroundTransparency = 1
-closeBtn.Image = logoID
-closeBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
-
--- PLAYER TAB: Infinite Jump
-local infJump = false
-local btnJump = Instance.new("TextButton", pages["Player"])
-btnJump.Size = UDim2.new(0, 200, 0, 35)
-btnJump.Position = UDim2.new(0, 20, 0, 60)
-btnJump.BackgroundColor3 = Color3.fromRGB(140, 0, 200)
-btnJump.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnJump.Font = Enum.Font.GothamBold
-btnJump.TextSize = 16
-btnJump.Text = "Infinite Jump [OFF]"
-
-btnJump.MouseButton1Click:Connect(function()
-    infJump = not infJump
-    btnJump.Text = "Infinite Jump [" .. (infJump and "ON" or "OFF") .. "]"
-end)
-
-UIS.JumpRequest:Connect(function()
-    if infJump then
-        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
-    end
-end)
-
--- PLAYER TAB: SpeedHack
-local speedOn = false
-local btnSpeed = Instance.new("TextButton", pages["Player"])
-btnSpeed.Size = UDim2.new(0, 200, 0, 35)
-btnSpeed.Position = UDim2.new(0, 20, 0, 105)
-btnSpeed.BackgroundColor3 = Color3.fromRGB(120, 0, 180)
-btnSpeed.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnSpeed.Font = Enum.Font.GothamBold
-btnSpeed.TextSize = 16
-btnSpeed.Text = "SpeedHack [OFF]"
-
-btnSpeed.MouseButton1Click:Connect(function()
-    speedOn = not speedOn
-    btnSpeed.Text = "SpeedHack [" .. (speedOn and "ON" or "OFF") .. "]"
-    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid.WalkSpeed = speedOn and 100 or 16
-    end
-end)
-
--- AUTOMATICALLY TAB: AutoFarm dummy toggle
-local autoFarm = false
-local btnFarm = Instance.new("TextButton", pages["Automatically"])
-btnFarm.Size = UDim2.new(0, 200, 0, 35)
-btnFarm.Position = UDim2.new(0, 20, 0, 60)
-btnFarm.BackgroundColor3 = Color3.fromRGB(140, 0, 180)
-btnFarm.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnFarm.Font = Enum.Font.GothamBold
-btnFarm.TextSize = 16
-btnFarm.Text = "Auto Farm [OFF]"
-
-btnFarm.MouseButton1Click:Connect(function()
-    autoFarm = not autoFarm
-    btnFarm.Text = "Auto Farm [" .. (autoFarm and "ON" or "OFF") .. "]"
-    if autoFarm then
-        spawn(function()
-            while autoFarm do
-                print("Auto farming...")
-                task.wait(1)
-            end
-        end)
-    end
-end)
-
--- Animation
-main.Size = UDim2.new(0, 0, 0, 0)
-main.Position = UDim2.new(0.5, 0, 0.5, 0)
-TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-    Size = UDim2.new(0, 600, 0, 350),
-    Position = UDim2.new(0.5, -300, 0.5, -175)
-}):Play()
+--// Auto Sell
+Window:CreateToggle({
+   Name = "Auto Sell",
+   CurrentValue = false,
+   Flag = "AutoSell",
+   Callback = function(state)
+      getgenv().autoSell = state
+      task.spawn(function()
+         while getgenv().autoSell do
+            game:GetService("ReplicatedStorage").Remotes.Sell:FireServer()
+            task.wait(1)
+         end
+      end)
+   end,
+})
