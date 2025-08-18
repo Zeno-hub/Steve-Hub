@@ -1,65 +1,65 @@
--- // Auto Next World - Race Clicker
--- By Zeno Hub 😹
+-- Auto Next World Teleport Script
 
--- Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Config
-local AutoNextWorld = false
-local checkTime = 5
-local worlds = {"Underwater", "Coral", "Atlantis", "WildWest", "Mine", "Toy", "Prison"}
-
--- Services
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local KnitServices = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services")
-local WorldService = KnitServices:WaitForChild("WorldService")
-local Travel = WorldService:WaitForChild("RF"):WaitForChild("Travel")
-
--- Teleport Function (Test world unlock by trying)
-local function TryTeleport(worldName)
-    local success, result = pcall(function()
-        return Travel:InvokeServer(worldName, false)
-    end)
-    if success and result ~= nil then
-        Rayfield:Notify({
-            Title = "Auto Next World",
-            Content = "Teleport ke: " .. worldName,
-            Duration = 3,
-            Image = 4483362458
-        })
-        return true
-    end
-    return false
-end
-
--- Loop
-task.spawn(function()
-    while task.wait(checkTime) do
-        if AutoNextWorld then
-            for i = #worlds, 1, -1 do
-                if TryTeleport(worlds[i]) then
-                    break
-                end
-            end
-        end
-    end
-end)
-
--- GUI Window
 local Window = Rayfield:CreateWindow({
-    Name = "Zeno Hub | Race Clicker",
-    LoadingTitle = "Zeno Hub",
-    LoadingSubtitle = "by Ciefy 😹",
-    KeySystem = false
+   Name = "Steve Hub | Auto World",
+   LoadingTitle = "Steve Hub Loader",
+   LoadingSubtitle = "by Zeno",
+   ConfigurationSaving = {
+      Enabled = false
+   },
+   Discord = {
+      Enabled = false
+   }
 })
 
-local MainTab = Window:CreateTab("Main", 4483362458)
+-- daftar world sesuai urutan
+local Worlds = {
+    "Underwater",
+    "Atlantis",
+    "WildWest",
+    "Mine",
+    "Toy",
+    "Prison",
+    "Coral"
+}
 
-MainTab:CreateToggle({
-    Name = "Auto Next World",
-    CurrentValue = false,
-    Flag = "AutoNextWorld",
-    Callback = function(Value)
-        AutoNextWorld = Value
-    end,
+local Tab = Window:CreateTab("Teleport", 4483362458)
+local Section = Tab:CreateSection("Auto Next World")
+
+local AutoNext = false
+
+Tab:CreateToggle({
+   Name = "Auto Next World",
+   CurrentValue = false,
+   Flag = "AutoNext",
+   Callback = function(Value)
+       AutoNext = Value
+       while AutoNext do
+           task.wait(2)
+
+           local currentWorld = game:GetService("Players").LocalPlayer.PlayerGui.HUD.World.Text
+           local nextWorld
+
+           for i,world in ipairs(Worlds) do
+               if world == currentWorld and Worlds[i+1] then
+                   nextWorld = Worlds[i+1]
+                   break
+               end
+           end
+
+           if nextWorld then
+               local args = { nextWorld, false }
+               game:GetService("ReplicatedStorage")
+                   :WaitForChild("Packages")
+                   :WaitForChild("Knit")
+                   :WaitForChild("Services")
+                   :WaitForChild("WorldService")
+                   :WaitForChild("RF")
+                   :WaitForChild("Travel")
+                   :InvokeServer(unpack(args))
+           end
+       end
+   end,
 })
