@@ -1,70 +1,74 @@
--- Archeron Hub UI
-local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local CloseButton = Instance.new("ImageButton")
-local AutoButton = Instance.new("TextButton")
+-- Archeron Hub - Simple UI Fix
+local player = game:GetService("Players").LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "ArcheronHub"
+gui.Parent = player:WaitForChild("PlayerGui")
 
--- Parent
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.Name = "ArcheronHub"
-
--- Main Frame
-MainFrame.Size = UDim2.new(0, 250, 0, 120)
-MainFrame.Position = UDim2.new(0, 20, 0, 80) -- kiri atas
-MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
-MainFrame.BorderSizePixel = 0
-MainFrame.BackgroundTransparency = 0.2
-MainFrame.Parent = ScreenGui
-MainFrame.Active = true
-MainFrame.Draggable = true -- bisa digeser
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 250, 0, 120)
+frame.Position = UDim2.new(0, 20, 0, 80) -- kiri atas
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.BackgroundTransparency = 0.2
+frame.BorderSizePixel = 0
+frame.Parent = gui
+frame.Active = true
+frame.Draggable = true
 
 -- Title
-Title.Parent = MainFrame
-Title.Size = UDim2.new(1, -40, 0, 30)
-Title.Position = UDim2.new(0, 10, 0, 5)
-Title.BackgroundTransparency = 1
-Title.Text = "Archeron Hub"
-Title.TextColor3 = Color3.fromRGB(255,255,255)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
-Title.TextXAlignment = Enum.TextXAlignment.Left
+local title = Instance.new("TextLabel")
+title.Parent = frame
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.BackgroundTransparency = 1
+title.Text = "Archeron Hub"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
 
 -- Close Button (Logo Archeron)
-CloseButton.Parent = MainFrame
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.Image = "rbxassetid://104034274572307" -- ID decal Archeron
-CloseButton.BackgroundTransparency = 1
-CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
+local btnClose = Instance.new("ImageButton")
+btnClose.Parent = frame
+btnClose.Size = UDim2.new(0, 30, 0, 30)
+btnClose.Position = UDim2.new(1, -35, 0, 5)
+btnClose.BackgroundTransparency = 1
+btnClose.Image = "rbxassetid://104034274572307" -- Logo ID lo
+btnClose.MouseButton1Click:Connect(function()
+    gui.Enabled = false -- bisa juga: gui:Destroy()
 end)
 
 -- Auto Open Button
-AutoButton.Parent = MainFrame
-AutoButton.Size = UDim2.new(1, -20, 0, 40)
-AutoButton.Position = UDim2.new(0, 10, 0, 45)
-AutoButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
-AutoButton.TextColor3 = Color3.fromRGB(255,255,255)
-AutoButton.Font = Enum.Font.SourceSansBold
-AutoButton.TextSize = 16
-AutoButton.Text = "Auto Open Silver Crate: OFF"
-AutoButton.BorderSizePixel = 0
+local btnAuto = Instance.new("TextButton")
+btnAuto.Parent = frame
+btnAuto.Size = UDim2.new(1, -20, 0, 40)
+btnAuto.Position = UDim2.new(0, 10, 0, 45)
+btnAuto.BackgroundColor3 = Color3.fromRGB(30,30,30)
+btnAuto.TextColor3 = Color3.fromRGB(255,255,255)
+btnAuto.Font = Enum.Font.SourceSansBold
+btnAuto.TextSize = 16
+btnAuto.Text = "Auto Open Silver Crate: OFF"
+btnAuto.BorderSizePixel = 0
 
--- Toggle auto open
 local auto = false
-AutoButton.MouseButton1Click:Connect(function()
+btnAuto.MouseButton1Click:Connect(function()
     auto = not auto
+    btnAuto.Text = "Auto Open Silver Crate: " .. (auto and "ON" or "OFF")
     if auto then
-        AutoButton.Text = "Auto Open Silver Crate: ON"
         spawn(function()
             while auto do
                 local args = {"Silver"}
-                game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("CratesService"):WaitForChild("RF"):WaitForChild("OpenCrate"):InvokeServer(unpack(args))
+                pcall(function()
+                    game:GetService("ReplicatedStorage")
+                        :WaitForChild("Packages")
+                        :WaitForChild("Knit")
+                        :WaitForChild("Services")
+                        :WaitForChild("CratesService")
+                        :WaitForChild("RF")
+                        :WaitForChild("OpenCrate")
+                        :InvokeServer(unpack(args))
+                end)
                 task.wait(1)
             end
         end)
-    else
-        AutoButton.Text = "Auto Open Silver Crate: OFF"
     end
 end)
