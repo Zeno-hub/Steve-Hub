@@ -1,4 +1,4 @@
--- // Auto Next World - Race Clicker (Bypass Check)
+-- // Auto Next World - Race Clicker
 -- By Zeno Hub 😹
 
 -- Load Rayfield
@@ -18,7 +18,7 @@ local Travel = WorldService:WaitForChild("RF"):WaitForChild("Travel")
 -- Teleport Function (Test world unlock by trying)
 local function TryTeleport(worldName)
     local success, result = pcall(function()
-        return Travel:InvokeServer("Home", false, worldName)
+        return Travel:InvokeServer(worldName, false)
     end)
     if success and result ~= nil then
         Rayfield:Notify({
