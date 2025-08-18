@@ -1,4 +1,4 @@
--- Auto Next World Teleport Script
+-- Auto Next World Teleport Script (Urutan Updated)
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -14,15 +14,15 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
--- daftar world sesuai urutan
+-- urutan world bener
 local Worlds = {
+    "Coral",
     "Underwater",
     "Atlantis",
     "WildWest",
     "Mine",
     "Toy",
-    "Prison",
-    "Coral"
+    "Prison"
 }
 
 local Tab = Window:CreateTab("Teleport", 4483362458)
